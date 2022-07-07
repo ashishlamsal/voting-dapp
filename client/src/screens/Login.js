@@ -20,23 +20,23 @@ export default function Login() {
 
     const navigate = useNavigate();
 
-    const loadWeb3 = async () => {
-        try {
-            const web3 = await getWeb3();
-            const accounts = await web3.eth.getAccounts();
-            const networkId = await web3.eth.net.getId();
-            const deployedNetwork = ElectionContract.networks[networkId];
-            const instance = new web3.eth.Contract(
-                ElectionContract.abi,
-                deployedNetwork && deployedNetwork.address
-            );
-            setWeb3(web3);
-            setCurrentAccount(accounts[0]);
-            setContract(instance);
-        } catch (error) {
-            console.error("Error:", error);
-        }
-    };
+    // const loadWeb3 = async () => {
+    //     try {
+    //         const web3 = await getWeb3();
+    //         const accounts = await web3.eth.getAccounts();
+    //         const networkId = await web3.eth.net.getId();
+    //         const deployedNetwork = ElectionContract.networks[networkId];
+    //         const instance = new web3.eth.Contract(
+    //             ElectionContract.abi,
+    //             deployedNetwork && deployedNetwork.address
+    //         );
+    //         setWeb3(web3);
+    //         setCurrentAccount(accounts[0]);
+    //         setContract(instance);
+    //     } catch (error) {
+    //         console.error("Error:", error);
+    //     }
+    // };
 
     const handleClick = () => {
         console.log("Login to metamask")
