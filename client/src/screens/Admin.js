@@ -8,7 +8,6 @@ import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
-import DialogTitle from '@mui/material/DialogTitle';
 
 import Candidate from '../components/CandidateCard';
 
@@ -20,6 +19,7 @@ export default function Admin({role, contract, web3, currentAccount}) {
     // const [web3, setWeb3] = useState(null);
     // const [currentAccount, setCurrentAccount] = useState(null);
     // const [contract, setContract] = useState(null);
+    const [electionState, setElectionState] = useState("NotStarted");
     const [loading, setLoading] = useState(true);
     const [candidates, setCandidates] = useState([]);
 
@@ -44,25 +44,34 @@ export default function Admin({role, contract, web3, currentAccount}) {
     //   }
     // };
 
-  const getCandidates = async () => {
-      if (contract) {
-          const count = await contract.methods.candidatesCount().call();
-          const temp = [];
-          for (let i = 0; i < count; i++) {
-              const candidate = await contract.methods.getCandidateDetails(i).call();
-              temp.push({ name: candidate[0], votes: candidate[1] });
-          }
-          setCandidates(temp);
-          setLoading(false);
-          console.log(temp)
-      }
-  };
+    const getCandidates = async () => {
+        if (contract) {
+            console.log(contract)
+            const count = await contract.methods.candidatesCount().call();
+            const temp = [];
+            for (let i = 0; i < count; i++) {
+                const candidate = await contract.methods.getCandidateDetails(i).call();
+                temp.push({ name: candidate[0], votes: candidate[1] });
+            }
+            setCandidates(temp);
+            setLoading(false);
+            console.log(temp)
+        }
+    };
+
+    const getElectionState = async () => {
+        if (contract) {
+            const state = await contract.methods.electionState().call();
+            setElectionState(state);
+        }
+    }
 
     // useEffect(() => {
     //     loadWeb3();
     // }, []);
 
     useEffect(() => {
+        getElectionState();
         getCandidates();
     }, [contract]);
 
@@ -75,8 +84,10 @@ export default function Admin({role, contract, web3, currentAccount}) {
     };
 
     const handleAgree = async () => {
-        console.log("Ending Election");
-        await contract.methods.endElection().call();
+        if (electionState==="NotStarted")
+            await contract.methods.startElection().call();
+        else if (electionState==="InProgress")
+            await contract.methods.endElection().call();
     }
 
     return (
@@ -93,7 +104,8 @@ export default function Admin({role, contract, web3, currentAccount}) {
                                 sx={{width: "100%"}}
                                 onClick={handleEnd}
                             >
-                                End Election
+                                { electionState && electionState==="NotStarted" && "Start Election"}
+                                { electionState && electionState==="InProgress" && "End Election"}
                             </Button>
                         </div>
                     </Grid>
@@ -124,7 +136,8 @@ export default function Admin({role, contract, web3, currentAccount}) {
                 >
                 <DialogContent>
                     <DialogContentText id="alert-dialog-description">
-                    Do you want to end the election?
+                    { electionState && electionState==="NotStarted" && "Do you want to start the election?"}
+                    { electionState && electionState==="InProgress" && "Do you want to end the election?"}
                     </DialogContentText>
                 </DialogContent>
                 <DialogActions>

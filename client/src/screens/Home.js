@@ -35,7 +35,7 @@ export default function Home() {
     const getRole = async () => {
         if (contract) {
             // const role = await contract.methods.getRole().call();
-            const role = 2;
+            const role = 1;
             setRole(role);
             setLoading(false);
         }
@@ -55,13 +55,13 @@ export default function Home() {
                 <h1>Loading the page !!!</h1>
             ) : (
                 <Box>
-                    { role===1 && <Vote role={role} 
+                    { role===1 && <Admin role={role} 
                                                 contract={contract} 
                                                 web3={web3} 
                                                 currentAccount={currentAccount}/>
                     }
 
-                    { role===2 && <Admin role={role} 
+                    { role===2 && <Vote role={role} 
                                                 contract={contract} 
                                                 web3={web3} 
                                                 currentAccount={currentAccount}/>

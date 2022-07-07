@@ -1,6 +1,6 @@
 import { Routes, Route } from 'react-router-dom';
 
-import Admin from './screens/Admin';
+import CandidateForm from './screens/CandidateForm';
 import Home from './screens/Home';
 import Navbar from './components/Navbar';
 import Login from './screens/Login';
@@ -19,6 +19,7 @@ function App() {
       <Routes>
             <Route path="/login" element={<Login />} />
             <Route path="/home" element={<Home />} />
+            <Route path="/add" element={<CandidateForm />} />
         </Routes>
       </div>
 
