@@ -74,8 +74,9 @@ export default function Admin({role, contract, web3, currentAccount}) {
       setOpen(false);
     };
 
-    const handleAgree = () => {
+    const handleAgree = async () => {
         console.log("Ending Election");
+        await contract.methods.endElection().call();
     }
 
     return (
@@ -104,10 +105,12 @@ export default function Admin({role, contract, web3, currentAccount}) {
                         <Divider />
                     </Grid>
         
-                    <Grid item xs={12}>
+                    <Grid container spacing={2} >
                         {candidates && candidates.map((candidate, index) => (
+                            <Grid item xs={4} key={index}>
                                     <Candidate id={index} name={candidate.name} voteCount={candidate.votes} />
-                                ))}
+                            </Grid>
+                        ))}
                         
                     </Grid>
             
@@ -119,9 +122,6 @@ export default function Admin({role, contract, web3, currentAccount}) {
                 aria-labelledby="alert-dialog-title"
                 aria-describedby="alert-dialog-description"
                 >
-                <DialogTitle id="alert-dialog-title">
-                    {"Use Google's location service?"}
-                </DialogTitle>
                 <DialogContent>
                     <DialogContentText id="alert-dialog-description">
                     Do you want to end the election?
