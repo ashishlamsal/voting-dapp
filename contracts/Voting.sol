@@ -55,7 +55,7 @@ contract Election {
 
     function addCandidate(string memory _name) private {
         require(owner==msg.sender, "Only owner can add candidates");
-        
+
         candidates[candidatesCount] = Candidate(candidatesCount, _name, 0);
         candidatesCount++;
     }
