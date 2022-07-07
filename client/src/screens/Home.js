@@ -7,7 +7,7 @@ import getWeb3 from "../utils/getWeb3";
 
 
 export default function Home() {
-    const [role, setRole] = useState(1);
+    const [role, setRole] = useState(2);
     const [web3, setWeb3] = useState(null);
     const [currentAccount, setCurrentAccount] = useState(null);
     const [contract, setContract] = useState(null);
@@ -34,7 +34,8 @@ export default function Home() {
 
     const getRole = async () => {
         if (contract) {
-            const role = await contract.methods.getRole().call();
+            // const role = await contract.methods.getRole().call();
+            const role = 2;
             setRole(role);
             setLoading(false);
         }
@@ -54,13 +55,13 @@ export default function Home() {
                 <h1>Loading the page !!!</h1>
             ) : (
                 <Box>
-                    { role && role===1 && <Vote role={role} 
+                    { role===1 && <Vote role={role} 
                                                 contract={contract} 
                                                 web3={web3} 
                                                 currentAccount={currentAccount}/>
                     }
 
-                    { role && role===2 && <Admin role={role} 
+                    { role===2 && <Admin role={role} 
                                                 contract={contract} 
                                                 web3={web3} 
                                                 currentAccount={currentAccount}/>

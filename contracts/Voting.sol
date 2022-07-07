@@ -8,10 +8,21 @@ contract Election {
         uint256 voteCount;
     }
 
+    address private owner;
+
+    struct Voter {
+        uint256 id;
+        string name;
+    }
+
     mapping(uint256 => Candidate) candidates;
     mapping(address => bool) voted;
 
+    mapping(address => bool) isVoter;
+
     uint256 public candidatesCount = 0;
+
+    uint256 public votersCount = 0;
 
     constructor() {
         addCandidate("Candidate 1");
@@ -25,7 +36,13 @@ contract Election {
         candidatesCount++;
     }
 
+    function addVoter(address _voter) public {
+        require(owner==msg.sender, "Only owner can add voter");
+        isVoter[_voter] = true;
+    }
+
     function vote(uint256 _candidateId) public {
+        require(isVoter[msg.sender], "Non authorised user cannot vote");
         require(!voted[msg.sender], "You have already voted");
         require(
             _candidateId >= 0 && _candidateId < candidatesCount,

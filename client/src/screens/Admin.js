@@ -54,6 +54,7 @@ export default function Admin({role, contract, web3, currentAccount}) {
           }
           setCandidates(temp);
           setLoading(false);
+          console.log(temp)
       }
   };
 
@@ -104,9 +105,10 @@ export default function Admin({role, contract, web3, currentAccount}) {
                     </Grid>
         
                     <Grid item xs={12}>
-                        {candidates.map((candidate, index) => (
+                        {candidates && candidates.map((candidate, index) => (
                                     <Candidate id={index} name={candidate.name} voteCount={candidate.votes} />
                                 ))}
+                        
                     </Grid>
             
                 </Grid>

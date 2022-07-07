@@ -1,7 +1,7 @@
 import { Routes, Route } from 'react-router-dom';
 
 import Admin from './screens/Admin';
-import Vote from './screens/Vote';
+import Home from './screens/Home';
 import Navbar from './components/Navbar';
 import Login from './screens/Login';
 
@@ -18,8 +18,7 @@ function App() {
       <div>
       <Routes>
             <Route path="/login" element={<Login />} />
-            <Route path="/vote" element={<Vote />} />
-            <Route path="/home" element={<Admin />} />
+            <Route path="/home" element={<Home />} />
         </Routes>
       </div>
 

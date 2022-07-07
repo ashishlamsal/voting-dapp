@@ -93,18 +93,9 @@ export default function Vote({role, contract, web3, currentAccount}) {
         setVote(event.target.value);
     };
     
-    const handleEnd = () => {
-        setOpen(true);
-    };
-  
-    const handleClose = () => {
-      setOpen(false);
-    };
-
-    const handleAgree = () => {
-        console.log("Voting Done!!!");
+    const handleVote = () => {
         voteCandidate(vote);
-    }
+    };
 
     return (
         <Box>
@@ -112,7 +103,7 @@ export default function Vote({role, contract, web3, currentAccount}) {
                 <h1>Loading the page !!!</h1>
             ) : (
             <Box>
-                <form onSubmit={handleEnd}>
+                <form onSubmit={handleVote}>
                     <Grid container>
 
                         <Grid item xs={12}>
@@ -133,6 +124,7 @@ export default function Vote({role, contract, web3, currentAccount}) {
                                     <div style={{display:"flex"}}>
                                     {candidates.map((candidate, index) => (
                                         <FormControlLabel
+                                            key={index}
                                             labelPlacement="top" 
                                             control={<Radio />} 
                                             value={index}
@@ -159,28 +151,6 @@ export default function Vote({role, contract, web3, currentAccount}) {
                     </Grid>
 
                     </form>
-
-                    <Dialog
-                    open={open}
-                    onClose={handleClose}
-                    aria-labelledby="alert-dialog-title"
-                    aria-describedby="alert-dialog-description"
-                >
-                    <DialogTitle id="alert-dialog-title">
-                    {"Use Google's location service?"}
-                    </DialogTitle>
-                    <DialogContent>
-                    <DialogContentText id="alert-dialog-description">
-                        Do you want to submit your vote?
-                    </DialogContentText>
-                    </DialogContent>
-                    <DialogActions>
-                    <Button onClick={handleClose}>Disagree</Button>
-                    <Button onClick={handleAgree} autoFocus>
-                        Agree
-                    </Button>
-                    </DialogActions>
-                </Dialog>
             </Box>
             )}
         
