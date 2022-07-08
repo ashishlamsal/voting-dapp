@@ -8,6 +8,12 @@ In this project, we are going to build block-chain based voting system. This vot
 
 In our block-chain based voting system, an admin has full access so he/she can remove/add candidate, start/end voting time, adding legitimate users and etc. In this system user can register him/her self with their identity card number and can able to vote their favorite candidate.
 
+## Screenshots
+
+![coverpage](screenshots/cover.png) &nbsp;
+![vote](screenshots/vote.png) &nbsp;
+![admin](screenshots/admin.png) &nbsp;
+
 ## Installation
 
 ### Step 1. Clone the project

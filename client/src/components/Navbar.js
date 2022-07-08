@@ -10,10 +10,12 @@ import Avatar from "@mui/material/Avatar";
 import Tooltip from "@mui/material/Tooltip";
 import MenuItem from "@mui/material/MenuItem";
 import HowToVoteIcon from "@mui/icons-material/HowToVote";
+import { useNavigate } from "react-router-dom";
 
-const settings = ["Profile", "Logout"];
+const settings = ["Logout"];
 
 const Navbar = () => {
+  const navigate = useNavigate();
   const [anchorElUser, setAnchorElUser] = React.useState(null);
 
   const handleOpenUserMenu = (event) => {
@@ -30,6 +32,7 @@ const Navbar = () => {
         console.log("Profile");
         break;
       case "Logout":
+        navigate("/");
         console.log("Logout");
         break;
       default:
