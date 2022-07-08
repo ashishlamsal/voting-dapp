@@ -5,7 +5,6 @@ import CardActions from "@mui/material/CardActions";
 import CardContent from "@mui/material/CardContent";
 import CardMedia from "@mui/material/CardMedia";
 import Typography from "@mui/material/Typography";
-import PersonIcon from "@mui/icons-material/Person";
 
 export default function Candidate({ id, name, voteCount }) {
   const IMG =
@@ -31,7 +30,7 @@ export default function Candidate({ id, name, voteCount }) {
       <CardActions sx={{ justifyContent: "center" }}>
         {voteCount && (
           <Typography align="center" variant="">
-            <strong>{voteCount}</strong>
+            <strong>{voteCount}</strong> votes
           </Typography>
         )}
       </CardActions>

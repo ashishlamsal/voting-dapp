@@ -11,8 +11,6 @@ import FormControlLabel from "@mui/material/FormControlLabel";
 import FormControl from "@mui/material/FormControl";
 
 import Candidate from "../components/CandidateCard";
-import { styled } from "@mui/material/styles";
-import Paper from "@mui/material/Paper";
 
 export default function Vote({ role, contract, web3, currentAccount }) {
   // const [loading, setLoading] = useState(true);
@@ -63,8 +61,8 @@ export default function Vote({ role, contract, web3, currentAccount }) {
       <form onSubmit={handleVote}>
         <Grid container sx={{ mt: 0 }} spacing={6} justifyContent="center">
           <Grid item xs={12}>
-            <Typography align="center" variant="h5">
-              Candidates
+            <Typography align="center" variant="h6">
+              VOTE FOR YOUR FAVOURITE CANDIDATE
             </Typography>
             <Divider />
           </Grid>

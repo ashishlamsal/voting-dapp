@@ -10,38 +10,15 @@ import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from "@mui/material/DialogContentText";
 
 import Candidate from "../components/CandidateCard";
-
-// import ElectionContract from "../contracts/Election.json";
-// import getWeb3 from "../utils/getWeb3";
+import CandidateForm from "../components/CandidateForm";
+import VotersForm from "../components/VotersForm";
 
 export default function Admin({ role, contract, web3, currentAccount }) {
-  // const [web3, setWeb3] = useState(null);
-  // const [currentAccount, setCurrentAccount] = useState(null);
-  // const [contract, setContract] = useState(null);
-  const [electionState, setElectionState] = useState("NotStarted");
+  const [electionState, setElectionState] = useState(0);
   const [loading, setLoading] = useState(true);
   const [candidates, setCandidates] = useState([]);
 
   const [open, setOpen] = useState(false);
-
-  // const loadWeb3 = async () => {
-  //   try {
-  //     const web3 = await getWeb3();
-  //     const accounts = await web3.eth.getAccounts();
-  //     const networkId = await web3.eth.net.getId();
-  //     const deployedNetwork = ElectionContract.networks[networkId];
-  //     const instance = new web3.eth.Contract(
-  //       ElectionContract.abi,
-  //       deployedNetwork && deployedNetwork.address
-  //     );
-
-  //     setWeb3(web3);
-  //     setCurrentAccount(accounts[0]);
-  //     setContract(instance);
-  //   } catch (error) {
-  //     console.error("Error:", error);
-  //   }
-  // };
 
   const getCandidates = async () => {
     if (contract) {
@@ -61,13 +38,9 @@ export default function Admin({ role, contract, web3, currentAccount }) {
   const getElectionState = async () => {
     if (contract) {
       const state = await contract.methods.electionState().call();
-      setElectionState(state);
+      setElectionState(parseInt(state));
     }
   };
-
-  // useEffect(() => {
-  //     loadWeb3();
-  // }, []);
 
   useEffect(() => {
     getElectionState();
@@ -83,55 +56,134 @@ export default function Admin({ role, contract, web3, currentAccount }) {
   };
 
   const handleAgree = async () => {
-    if (electionState === "NotStarted")
-      await contract.methods.startElection().call();
-    else if (electionState === "InProgress")
-      await contract.methods.endElection().call();
+    if (electionState === 0) {
+      try {
+        if (contract) {
+          await contract.methods.startElection().send({ from: currentAccount });
+          getElectionState();
+        }
+      } catch (error) {
+        console.error("Error:", error);
+      }
+    } else if (electionState === 1) {
+      try {
+        if (contract) {
+          await contract.methods.endElection().send({ from: currentAccount });
+          getElectionState();
+        }
+      } catch (error) {
+        console.error("Error:", error);
+      }
+    }
+
+    setOpen(false);
   };
 
   return (
     <Box>
       {loading ? (
-        <h1>Loading the page !!!</h1>
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            height: "80vh",
+          }}
+        >
+          Loading...
+        </Box>
       ) : (
         <Box>
-          <Grid container>
+          <Grid container sx={{ mt: 0 }} spacing={4}>
             <Grid item xs={12}>
-              <div style={{ margin: 20 }}>
+              <Typography align="center" variant="h6" color="textSecondary">
+                ELECTION STATUS :{" "}
+                {electionState === 0 && "Election has not started."}
+                {electionState === 1 && "Election is in progress."}
+                {electionState === 2 && "Election has ended."}
+              </Typography>
+              <Divider />
+            </Grid>
+            {electionState !== 2 && (
+              <Grid item xs={12} sx={{ display: "flex" }}>
                 <Button
-                  variant="outlined"
-                  sx={{ width: "100%" }}
+                  variant="contained"
+                  sx={{ width: "40%", margin: "auto" }}
                   onClick={handleEnd}
                 >
-                  {electionState &&
-                    electionState === "NotStarted" &&
-                    "Start Election"}
-                  {electionState &&
-                    electionState === "InProgress" &&
-                    "End Election"}
+                  {electionState === 0 && "Start Election"}
+                  {electionState === 1 && "End Election"}
                 </Button>
-              </div>
-            </Grid>
+              </Grid>
+            )}
 
             <Grid item xs={12}>
-              <Typography align="center" variant="h4">
-                Vote Count
+              <Typography align="center" variant="h6">
+                {electionState === 0 && "ADD VOTERS / CANDIDATES"}
+                {electionState === 1 && "SEE LIVE RESULTS"}
+                {electionState === 2 && "FINAL ELECTION RESULT"}
               </Typography>
               <Divider />
             </Grid>
 
-            <Grid container spacing={2}>
-              {candidates &&
-                candidates.map((candidate, index) => (
-                  <Grid item xs={4} key={index}>
-                    <Candidate
-                      id={index}
-                      name={candidate.name}
-                      voteCount={candidate.votes}
-                    />
-                  </Grid>
-                ))}
-            </Grid>
+            {electionState === 0 && (
+              <Grid
+                item
+                xs={12}
+                sx={{
+                  overflowY: "hidden",
+                  overflowX: "auto",
+                  display: "flex",
+                  width: "98vw",
+                  justifyContent: "center",
+                }}
+              >
+                <Box
+                  sx={{
+                    display: "flex",
+                    flexDirection: "column",
+                    width: "100%",
+                    alignItems: "center",
+                  }}
+                >
+                  <VotersForm
+                    contract={contract}
+                    web3={web3}
+                    currentAccount={currentAccount}
+                  />
+                  <CandidateForm
+                    contract={contract}
+                    web3={web3}
+                    currentAccount={currentAccount}
+                  />
+                </Box>
+              </Grid>
+            )}
+
+            {electionState > 0 && (
+              <Grid
+                item
+                xs={12}
+                sx={{
+                  overflowY: "hidden",
+                  overflowX: "auto",
+                  display: "flex",
+                  width: "98vw",
+                  justifyContent: "center",
+                }}
+              >
+                {candidates &&
+                  candidates.map((candidate, index) => (
+                    <Box sx={{ mx: 2 }} key={index}>
+                      <Candidate
+                        id={index}
+                        name={candidate.name}
+                        voteCount={candidate.votes}
+                      />
+                    </Box>
+                  ))}
+              </Grid>
+            )}
           </Grid>
 
           <Dialog
@@ -142,12 +194,8 @@ export default function Admin({ role, contract, web3, currentAccount }) {
           >
             <DialogContent>
               <DialogContentText id="alert-dialog-description">
-                {electionState &&
-                  electionState === "NotStarted" &&
-                  "Do you want to start the election?"}
-                {electionState &&
-                  electionState === "InProgress" &&
-                  "Do you want to end the election?"}
+                {electionState === 0 && "Do you want to start the election?"}
+                {electionState === 1 && "Do you want to end the election?"}
               </DialogContentText>
             </DialogContent>
             <DialogActions>

@@ -25,6 +25,8 @@ export default function Home() {
       setWeb3(web3);
       setCurrentAccount(accounts[0]);
       setContract(instance);
+      console.log("init");
+      setLoading(false);
     } catch (error) {
       console.error("Error:", error);
     }
@@ -32,9 +34,9 @@ export default function Home() {
 
   const getRole = async () => {
     if (contract) {
-      // const role = await contract.methods.getRole().call();
-      const role = 2;
-      setRole(role);
+      const user = await contract.methods.getRole(currentAccount).call();
+      setRole(parseInt(user));
+      console.log("role:");
       setLoading(false);
     }
   };
@@ -61,13 +63,12 @@ export default function Home() {
             display: "flex",
             justifyContent: "center",
             alignItems: "center",
-            height: "100%",
+            height: "80vh",
           }}
         >
           Loading...
         </Box>
       ) : (
-        // <h1>Loading the page !!!</h1>
         <Box>
           {role === 1 && (
             <Admin
@@ -75,7 +76,6 @@ export default function Home() {
               contract={contract}
               web3={web3}
               currentAccount={currentAccount}
-              // loading={loading}
             />
           )}
 
@@ -85,11 +85,21 @@ export default function Home() {
               contract={contract}
               web3={web3}
               currentAccount={currentAccount}
-              // loading={loading}
             />
           )}
 
-          {role === 0 && <h1>Unauthorised user</h1>}
+          {role === 3 && (
+            <Box
+              sx={{
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                height: "80vh",
+              }}
+            >
+              Unauthorized User
+            </Box>
+          )}
         </Box>
       )}
     </Box>

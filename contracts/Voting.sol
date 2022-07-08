@@ -2,7 +2,6 @@
 pragma solidity >=0.4.0 <0.9.0;
 
 contract Election {
-
     enum State {
         NotStarted,
         InProgress,
@@ -53,22 +52,32 @@ contract Election {
         electionState = State.Ended;
     }
 
-    function addCandidate(string memory _name) private {
-        require(owner==msg.sender, "Only owner can add candidates");
+    function addCandidate(string memory _name) public {
+        require(owner == msg.sender, "Only owner can add candidates");
+        require(
+            electionState == State.NotStarted,
+            "Election has already started"
+        );
 
         candidates[candidatesCount] = Candidate(candidatesCount, _name, 0);
         candidatesCount++;
     }
 
     function addVoter(address _voter) public {
-        require(owner==msg.sender, "Only owner can add voter");
+        require(owner == msg.sender, "Only owner can add voter");
+        require(!isVoter[_voter], "Voter already added");
+        require(
+            electionState == State.NotStarted,
+            "Voter can't be added after election started"
+        );
+
         isVoter[_voter] = true;
     }
 
-    function getRole() public view returns (uint256) {
-        if (owner == msg.sender) {
+    function getRole(address _current) public view returns (uint256) {
+        if (owner == _current) {
             return 1;
-        } else if (isVoter[msg.sender]) {
+        } else if (isVoter[_current]) {
             return 2;
         } else {
             return 3;
@@ -76,7 +85,10 @@ contract Election {
     }
 
     function vote(uint256 _candidateId) public {
-        require(electionState == State.InProgress, "Election is not in progress");
+        require(
+            electionState == State.InProgress,
+            "Election is not in progress"
+        );
         require(isVoter[msg.sender], "Non authorised user cannot vote");
         require(!voted[msg.sender], "You have already voted");
         require(

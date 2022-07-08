@@ -6,13 +6,13 @@ import { useNavigate } from "react-router-dom";
 const backgroundImage =
   "https://images.unsplash.com/photo-1639322537228-f710d846310a?auto=format&fit=crop&w=1400";
 
-export default function CoverPage({ login }) {
+export default function CoverPage() {
   const navigate = useNavigate();
 
   const handleClick = () => {
-    console.log("Login to metamask");
-    login();
+    console.log("home button clicked");
     navigate("/home");
+    window.location.reload();
   };
 
   return (
@@ -47,7 +47,7 @@ export default function CoverPage({ login }) {
         sx={{ minWidth: 200 }}
         onClick={handleClick}
       >
-        Login with Metamask
+        Enter the Voting System
       </Button>
     </CoverLayout>
   );
