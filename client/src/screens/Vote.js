@@ -16,6 +16,7 @@ export default function Vote({ role, contract, web3, currentAccount }) {
   // const [loading, setLoading] = useState(true);
   const [candidates, setCandidates] = useState([]);
   const [vote, setVote] = useState(null);
+  const [electionState, setElectionState] = useState(0);
 
   const [open, setOpen] = useState(false);
 
@@ -43,7 +44,15 @@ export default function Vote({ role, contract, web3, currentAccount }) {
     }
   };
 
+  const getElectionState = async () => {
+    if (contract) {
+      const state = await contract.methods.electionState().call();
+      setElectionState(parseInt(state));
+    }
+  };
+
   useEffect(() => {
+    getElectionState();
     getCandidates();
   }, [contract]);
 
@@ -62,45 +71,80 @@ export default function Vote({ role, contract, web3, currentAccount }) {
         <Grid container sx={{ mt: 0 }} spacing={6} justifyContent="center">
           <Grid item xs={12}>
             <Typography align="center" variant="h6">
-              VOTE FOR YOUR FAVOURITE CANDIDATE
+              {electionState === 0 &&
+                "Please Wait... Election has not started yet."}
+              {electionState === 1 && "VOTE FOR YOUR FAVOURITE CANDIDATE"}
+              {electionState === 2 &&
+                "Election has ended. See the results below."}
             </Typography>
             <Divider />
           </Grid>
+          {electionState === 1 && (
+            <>
+              <Grid item xs={12}>
+                <FormControl>
+                  <RadioGroup
+                    row
+                    sx={{
+                      overflowY: "hidden",
+                      overflowX: "auto",
+                      display: "flex",
+                      width: "98vw",
+                      justifyContent: "center",
+                    }}
+                    value={vote}
+                    onChange={handleVoteChange}
+                  >
+                    {candidates.map((candidate, index) => (
+                      <FormControlLabel
+                        key={index}
+                        labelPlacement="top"
+                        control={<Radio />}
+                        value={index}
+                        label={<Candidate id={index} name={candidate.name} />}
+                      />
+                    ))}
+                  </RadioGroup>
+                </FormControl>
+              </Grid>
+              <Grid item xs={6}>
+                <div style={{ margin: 20 }}>
+                  <Button
+                    type="submit"
+                    variant="contained"
+                    sx={{ width: "100%" }}
+                  >
+                    Vote
+                  </Button>
+                </div>
+              </Grid>
+            </>
+          )}
 
-          <Grid item xs={12}>
-            <FormControl>
-              <RadioGroup
-                row
-                sx={{
-                  overflowY: "hidden",
-                  overflowX: "auto",
-                  display: "flex",
-                  width: "98vw",
-                  justifyContent: "center",
-                }}
-                value={vote}
-                onChange={handleVoteChange}
-              >
-                {candidates.map((candidate, index) => (
-                  <FormControlLabel
-                    key={index}
-                    labelPlacement="top"
-                    control={<Radio />}
-                    value={index}
-                    label={<Candidate id={index} name={candidate.name} />}
-                  />
+          {electionState === 2 && (
+            <Grid
+              item
+              xs={12}
+              sx={{
+                overflowY: "hidden",
+                overflowX: "auto",
+                display: "flex",
+                width: "98vw",
+                justifyContent: "center",
+              }}
+            >
+              {candidates &&
+                candidates.map((candidate, index) => (
+                  <Box sx={{ mx: 2 }} key={index}>
+                    <Candidate
+                      id={index}
+                      name={candidate.name}
+                      voteCount={candidate.votes}
+                    />
+                  </Box>
                 ))}
-              </RadioGroup>
-            </FormControl>
-          </Grid>
-
-          <Grid item xs={6}>
-            <div style={{ margin: 20 }}>
-              <Button type="submit" variant="contained" sx={{ width: "100%" }}>
-                Vote
-              </Button>
-            </div>
-          </Grid>
+            </Grid>
+          )}
         </Grid>
       </form>
     </Box>
